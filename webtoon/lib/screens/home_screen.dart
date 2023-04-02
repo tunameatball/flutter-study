@@ -1,13 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webtoon/services/api_service.dart';
 import 'package:webtoon/widgets/webtoon_widget.dart';
 
 import '../models/webtoon_model.dart';
 
-class HomeScreen extends StatelessWidget {
-  HomeScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   final Future<List<WebtoonModel>> webtoons = ApiService.getTodaysToons();
+  late SharedPreferences pref;
+
+  @override
+  void initState() {
+    super.initState();
+    initPref();
+  }
+
+  Future initPref() async {
+    pref = await SharedPreferences.getInstance();
+    final likedToons = pref.getStringList('likedToons');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,26 +43,87 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: FutureBuilder(
-        builder: ((context, snapshot) {
-          if (snapshot.hasData) {
-            return Column(
-              children: [
-                const SizedBox(
-                  height: 50,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(5),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Padding(
+              padding: EdgeInsets.symmetric(
+                vertical: 10,
+                horizontal: 20,
+              ),
+              child: Text(
+                "Main",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
                 ),
-                Expanded(
-                  child: makeList(snapshot),
+              ),
+            ),
+            SizedBox(
+              height: 350,
+              child: FutureBuilder(
+                builder: ((context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Column(
+                      children: [
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Expanded(
+                          child: makeList(snapshot),
+                        ),
+                      ],
+                    );
+                  } else {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                }),
+                future: webtoons,
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(
+                vertical: 10,
+                horizontal: 20,
+              ),
+              child: Text(
+                "Favorites",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
                 ),
-              ],
-            );
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        }),
-        future: webtoons,
+              ),
+            ),
+            SizedBox(
+              height: 400,
+              child: FutureBuilder(
+                builder: ((context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Column(
+                      children: [
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Expanded(
+                          child: makeList(snapshot),
+                        ),
+                      ],
+                    );
+                  } else {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                }),
+                future: webtoons,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -53,7 +132,6 @@ class HomeScreen extends StatelessWidget {
     return ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(
-          vertical: 10,
           horizontal: 20,
         ),
         itemCount: snapshot.data!.length,
