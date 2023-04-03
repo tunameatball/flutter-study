@@ -98,30 +98,30 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            SizedBox(
-              height: 400,
-              child: FutureBuilder(
-                builder: ((context, snapshot) {
-                  if (snapshot.hasData) {
-                    return Column(
-                      children: [
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Expanded(
-                          child: makeList(snapshot),
-                        ),
-                      ],
-                    );
-                  } else {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                }),
-                future: webtoons,
-              ),
-            ),
+            // SizedBox(
+            //   height: 400,
+            //   child: FutureBuilder(
+            //     builder: ((context, snapshot) {
+            //       if (snapshot.hasData) {
+            //         return Column(
+            //           children: [
+            //             const SizedBox(
+            //               height: 10,
+            //             ),
+            //             Expanded(
+            //               child: makeList(snapshot),
+            //             ),
+            //           ],
+            //         );
+            //       } else {
+            //         return const Center(
+            //           child: CircularProgressIndicator(),
+            //         );
+            //       }
+            //     }),
+            //     future: webtoons,
+            //   ),
+            // ),
           ],
         ),
       ),
